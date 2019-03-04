@@ -63,5 +63,23 @@ app.get('/getTempCity/:city/:units/:days', function(req, res) {
     })
     .catch( e => console.log ('Error', e));
 });
+app.get('/getCityDate/:city/:units/:startDate/:endDate', function(req, res) {
+    const params = req.params;
+    const urlApiWeather = `http://api.weatherbit.io/v2.0/history/daily?city=${params.city}&country=MX&state=Sonora&units=${params.units}&start_date=${params.startDate}&end_date=${params.endDate}&key=${apiKey}`
+    
+    axios.get(urlApiWeather)
+    .then(resp => {    
+        let data = {...resp.data};
+        let resParse = data.data.map((item) => {
+            return {data : item.max_temp, datetime: item.datetime}
+        });
+
+        res.json({
+            ...data,
+            data: resParse 
+        })
+    })
+    .catch( e => console.log ('Error', e));
+});
 
 module.exports = app;
